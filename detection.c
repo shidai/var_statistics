@@ -99,7 +99,7 @@ int main (int argc, char* argv[])
 		//for (i=id; i<nNoise; i+=p)
 		for (i=0; i<nNoise; i++)
 		{
-			control.whiteLevel = noise[i];
+			control.whiteLevel = pow(10.0, noise[i]);
 			calNoise (&noiseStructure, &control);
 
 			// simulate dynamic spectra

@@ -90,13 +90,13 @@ int calNoise (noiseStruct *noiseStructure, controlStruct *control)
 
 	noiseStructure->npixel = control->npixel; 
 	noiseStructure->n = control->n; 
-	noiseStructure->whiteLevel = control->whiteLevel; // mJy
 	noiseStructure->nchn = control->nchan; 
 	noiseStructure->nsubint = control->nsub; 
 
 	nchn = noiseStructure->nchn;
 	nsubint = noiseStructure->nsubint;
 
+	noiseStructure->whiteLevel = sqrt(nchn*nsubint)*control->whiteLevel; // mJy
 	n = control->n;  // number of realization
 	npixel = control->npixel; // number of pixel to average
 	// allocate memory
@@ -179,7 +179,6 @@ int calPsr (acfStruct *acfStructure, controlStruct *control)
 	//printf ("Starting simulating dynamic spectrum\n");
 	acfStructure->n = control->n; 
 	acfStructure->cFlux = control->cFlux; // mJy
-	acfStructure->whiteLevel = control->whiteLevel; // mJy
 	acfStructure->nchn = control->nchan;
 	acfStructure->nsubint = control->nsub;
 
@@ -187,6 +186,7 @@ int calPsr (acfStruct *acfStructure, controlStruct *control)
 	nsubint = acfStructure->nsubint;
 	n = acfStructure->n;
 
+	acfStructure->whiteLevel = sqrt(nchn*nsubint)*control->whiteLevel; // mJy
 	// allocate memory
 	acfStructure->dynPlot = (float **)malloc(sizeof(float *)*n);
 	acfStructure->psrMean = (float *)malloc(sizeof(float)*n);
@@ -226,7 +226,8 @@ int simPsr (acfStruct *acfStructure, long seed, int k)
 			noise = TKgaussDev(&seed);
 			//printf ("%f %f %f\n", re, im, noise);
 			//acfStructure->dynPlot[k][i*nsubint+j] = (float)(2.0*(pow(re,2.0)+pow(im,2.0))+16*noise);  
-			acfStructure->dynPlot[k][i*nsubint+j] = (float)(2.0*(pow(re,2.0)+pow(im,2.0))+acfStructure->whiteLevel*noise);  
+			//acfStructure->dynPlot[k][i*nsubint+j] = (float)(2.0*(pow(re,2.0)+pow(im,2.0))+acfStructure->whiteLevel*noise);  
+			acfStructure->dynPlot[k][i*nsubint+j] = (float)(0.5*(pow(re,2.0)+pow(im,2.0))+acfStructure->whiteLevel*noise);  
 		}
 	}
 
